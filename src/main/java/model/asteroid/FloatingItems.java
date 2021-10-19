@@ -21,15 +21,20 @@ public class FloatingItems {
         this.angle = angle;
     }
 
-    void update(){
+    public void update(){
         x+=x_speed;
         y+=y_speed;
         sprite.setTranslateX(x);
         sprite.setTranslateY(y);
+        sprite.setRotate(angle);
     }
 
     public float get_x(){
         return x;
+    }
+
+    public float get_angle(){
+        return angle;
     }
 
     public Polygon get_sprite(){

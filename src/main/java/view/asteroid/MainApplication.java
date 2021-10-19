@@ -26,6 +26,7 @@ public class MainApplication extends Application {
     public void start(Stage stage) throws IOException {
         GamePanel pane = new GamePanel();
         Scene scene = new Scene(pane, 1080, 720);
+        pane.add_handlers();
         this.stage = stage;
         this.stage.setTitle("Asteroid");
         this.stage.setScene(scene);
