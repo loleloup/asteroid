@@ -1,14 +1,22 @@
 package model.asteroid;
 
+import javafx.scene.shape.Polygon;
+
 public class Player extends FloatingItems{
 
     double THRUSTER_POWER = 0.2;
     int MAX_SPEED = 10;
-    int angle_deg;
+    int lifes = 0;
 
-    Player(float x, float y, float x_speed, float y_speed, int angle_deg) {
-        super(x, y, x_speed, y_speed);
-        this.angle_deg = angle_deg;
+    public Player(float x, float y, float x_speed, float y_speed, int angle_deg) {
+        super(x, y, x_speed, y_speed, 0);
+
+        Double[] pointlist = new Double[]{0.0, 0.0, -7.0, 15.0, 0.0, 10.0, 7.0, 15.0};
+
+        sprite = new Polygon();
+        sprite.getPoints().addAll(pointlist);
+        sprite.setTranslateX(x);
+        sprite.setTranslateY(y);
     }
 
     void thrust(float v_x, float v_y){
