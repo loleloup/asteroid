@@ -7,6 +7,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Polygon;
+import model.asteroid.FloatingItems;
 import model.asteroid.Meteor;
 import model.asteroid.Player;
 
@@ -35,10 +36,8 @@ public class GamePanel extends AnchorPane {
         }
     });
 
-    public GamePanel(){
-
-
-
+    public GamePanel(int width, int height){
+        FloatingItems.set_wind_size(width, height);
     }
 
     public void add_handlers(){     //need to add the events to the scene, otherwise doesn't receive them
@@ -64,7 +63,6 @@ public class GamePanel extends AnchorPane {
                         }
                         break;
                 }
-                //System.out.println(player.get_angle());
             }
         };
 

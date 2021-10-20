@@ -24,7 +24,7 @@ public class MainApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        GamePanel pane = new GamePanel();
+        GamePanel pane = new GamePanel(1080, 720);
         Scene scene = new Scene(pane, 1080, 720);
         pane.add_handlers();
         this.stage = stage;
