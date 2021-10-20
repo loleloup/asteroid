@@ -51,12 +51,9 @@ public class FloatingItems {
         wind_height = height;
     }
 
-    public float get_x(){
-        return x;
-    }
 
-    public float get_angle(){
-        return angle;
+    public boolean is_collision(FloatingItems other){
+        return sprite.intersects(sprite.sceneToLocal(other.sprite.localToScene(other.sprite.getBoundsInLocal())));
     }
 
     public Polygon get_sprite(){

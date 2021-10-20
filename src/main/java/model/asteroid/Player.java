@@ -6,8 +6,10 @@ public class Player extends FloatingItems{
 
     double THRUSTER_POWER = 0.3;
     float angle_speed = 5;
-    int MAX_SPEED = 10;
-    int lifes = 0;
+    int lives = 0;
+    int alive = 0;
+    int fire_rate = 15;
+    int fire_delay = 0;
 
     public Player(float x, float y, float x_speed, float y_speed, int angle_deg) {
         super(x, y, x_speed, y_speed, 0);
@@ -39,4 +41,35 @@ public class Player extends FloatingItems{
         }
         angle += rotate * angle_speed;
     }
+
+    public boolean lose_life(){
+        lives--;
+        alive = 180;    //3 sec invincibility
+        return lives > 0;
+    }
+
+    public void update(){
+        super.update();
+        if (alive > 0){
+            alive--;
+        }
+        if (fire_delay > 0){
+            fire_delay--;
+        }
+    }
+
+    public boolean is_alive() {
+        return alive == 0;
+    }
+
+    public boolean can_shoot(){
+        return fire_delay == 0;
+    }
+
+    public Projectile shoot(){
+        fire_delay = fire_rate;
+        return new Projectile(x, y, (float) -Math.cos(Math.toRadians(angle)), -(float) Math.sin(Math.toRadians(angle)));
+    }
+
+    //TODO add hyperspace TP
 }
