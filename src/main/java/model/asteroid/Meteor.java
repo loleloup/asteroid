@@ -32,7 +32,7 @@ public class Meteor extends FloatingItems{
 
     public Meteor break_it(){
         Random rand = new Random();
-        return new Meteor(x, y, (float)(x_speed + rand.nextFloat()-0.5), (float)(y_speed + rand.nextFloat()-0.5), size-1);
+        return new Meteor(x, y, (float)(x_speed + (rand.nextFloat()-0.5)*10), (float)(y_speed + (rand.nextFloat()-0.5)*10), size-1);
     }
 
     public void update(){

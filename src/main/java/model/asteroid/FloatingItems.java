@@ -15,7 +15,7 @@ public class FloatingItems {
     float angle = 0;
     Polygon sprite;
 
-    FloatingItems(){};
+    FloatingItems(){}
 
     FloatingItems(float x, float y, float x_speed, float y_speed, float angle){
         this.x = x;

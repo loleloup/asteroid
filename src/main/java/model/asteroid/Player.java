@@ -22,7 +22,6 @@ public class Player extends FloatingItems{
         sprite.setTranslateY(y);
     }
 
-
     public void thrust(){
         x_speed -= Math.cos(Math.toRadians(angle)) * THRUSTER_POWER;
         y_speed -= Math.sin(Math.toRadians(angle)) * THRUSTER_POWER;

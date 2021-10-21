@@ -11,6 +11,8 @@ import model.asteroid.Meteor;
 import model.asteroid.Player;
 import model.asteroid.Projectile;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
 import java.util.concurrent.Semaphore;
 
@@ -26,8 +28,6 @@ public class GamePanel extends AnchorPane {
     boolean q_flag = false;
     boolean d_flag = false;
     boolean space_flag = false;
-
-    Semaphore updating = new Semaphore(1, true);
 
     Thread timerThread = new Thread(() -> {
         while (true) {
@@ -122,56 +122,64 @@ public class GamePanel extends AnchorPane {
 
     void update(){
 
-        if (updating.tryAcquire()){
-            player.handle_inputs(z_flag, d_flag, q_flag);
-            player.update();
-            if (player.can_shoot() & space_flag){
-                Projectile p = player.shoot();
-                projectiles.add(p);
-                getChildren().add(p.get_sprite());
+        player.handle_inputs(z_flag, d_flag, q_flag);
+        player.update();
+        if (player.can_shoot() & space_flag){
+            Projectile p = player.shoot();
+            projectiles.add(p);
+            getChildren().add(p.get_sprite());
+        }
+        Iterator<Projectile> p_it = projectiles.iterator();
+        Projectile p;
+        while (p_it.hasNext()){
+            p = p_it.next();
+            p.update();
+            if (p.is_dead()){
+                getChildren().remove(p.get_sprite());
+                p_it.remove();
             }
-            for (Projectile p : projectiles){
-                p.update();
-                if (p.is_dead()){
-                    getChildren().remove(p.get_sprite());
-                    projectiles.remove(p);
+            else{
+                Iterator<Meteor> m_it = enemy.iterator();
+                Meteor meteor;
+                while (m_it.hasNext()){
+                    meteor = m_it.next();
+                    if (p.is_collision(meteor)){
+                        remove_meteor(m_it, meteor);
+                        getChildren().remove(p.get_sprite());
+                        p_it.remove();
+                    }
+                }
+            }
+
+        }
+        Iterator<Meteor> m_it = enemy.iterator();
+        Meteor meteor;
+        while (m_it.hasNext()){
+            meteor = m_it.next();
+            meteor.update();
+            if (player.is_alive() & meteor.is_collision(player)){
+                if (!player.lose_life()){
+                    //gameover
                 }
                 else{
-                    for (Meteor meteor : enemy){
-                        if (p.is_collision(meteor)){
-                            remove_meteor(meteor);
-                            getChildren().remove(p.get_sprite());
-                            projectiles.remove(p);
-                        }
-                    }
-                }
-
-            }
-            for (Meteor meteor : enemy) {
-                meteor.update();
-                if (player.is_alive() & meteor.is_collision(player)){
-                    if (!player.lose_life()){
-                        //gameover
-                    }
-                    else{
-
-                    }
-
-                    //for collision with bullet only
-
-
 
                 }
+
+                //for collision with bullet only
+
+
+
             }
         }
-        updating.release();
+        }
 
 
-    }
 
-    private void remove_meteor(Meteor meteor){
+
+
+    private void remove_meteor(Iterator<Meteor> m_it, Meteor meteor){
         getChildren().remove(meteor.get_sprite());
-        enemy.remove(meteor);
+        m_it.remove();
         int new_size = meteor.get_size()-1;
         if (new_size > 0){
             Meteor baby = meteor.break_it();
