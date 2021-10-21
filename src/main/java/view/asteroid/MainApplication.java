@@ -1,6 +1,7 @@
 package view.asteroid;
 
 import controller.asteroid.GamePanel;
+import controller.asteroid.paneltest;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -24,7 +25,7 @@ public class MainApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        GamePanel pane = new GamePanel(1080, 720);
+        paneltest pane = new paneltest(1080, 720);
         Scene scene = new Scene(pane, 1080, 720);
         pane.add_handlers();
         this.stage = stage;

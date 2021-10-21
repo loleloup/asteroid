@@ -1,5 +1,6 @@
 package controller.asteroid;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -19,7 +20,9 @@ import java.util.concurrent.Semaphore;
 
 import static java.lang.Thread.sleep;
 
-public class GamePanel extends AnchorPane {
+
+
+public class paneltest extends AnchorPane {
 
     Vector<Meteor> enemy = new Vector<>();
     Vector<Projectile> projectiles = new Vector<>();
@@ -30,18 +33,22 @@ public class GamePanel extends AnchorPane {
     boolean d_flag = false;
     boolean space_flag = false;
 
-    Thread timerThread = new Thread(() -> {
-        while (true) {
+    long last_time;
+
+    AnimationTimer timer = new AnimationTimer() {
+        @Override
+        public void handle(long l) {
+            //System.out.println(last_time + "    " + l + "   diff = " + (l-last_time)/1000000);
+            last_time = l;
             try {
-                sleep(17); //60Hz
+                update();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            Platform.runLater(this::update);
         }
-    });
+    };
 
-    public GamePanel(int width, int height){
+    public paneltest(int width, int height){
         FloatingItems.set_wind_size(width, height);
     }
 
@@ -118,16 +125,15 @@ public class GamePanel extends AnchorPane {
         enemy.add(m);
         getChildren().add(m.get_sprite());
         getChildren().add(player.get_sprite());
-        timerThread.start();
+        timer.start();
     }
 
-    void update(){
-
+    void update() throws InterruptedException {
         player.handle_inputs(z_flag, d_flag, q_flag);
         player.update();
         if (player.can_shoot() & space_flag){
             Projectile p = player.shoot();
-            projectiles.add(p);
+            Platform.runLater(new addother<>(p, projectiles));
             Platform.runLater(new additem(p.get_sprite(), getChildren()));
         }
         Iterator<Projectile> p_it = projectiles.iterator();
@@ -172,7 +178,7 @@ public class GamePanel extends AnchorPane {
 
             }
         }
-        }
+    }
 
 
     private void removeSprite(Polygon sprite){
@@ -193,10 +199,10 @@ public class GamePanel extends AnchorPane {
         int new_size = meteor.get_size()-1;
         if (new_size > 0){
             Meteor baby = meteor.break_it();
-            enemy.add(baby);
+            Platform.runLater(new addother<>(baby, enemy));
             Platform.runLater(new additem(baby.get_sprite(), getChildren()));
             baby = meteor.break_it();
-            enemy.add(baby);
+            Platform.runLater(new addother<>(baby, enemy));
             Platform.runLater(new additem(baby.get_sprite(), getChildren()));
         }
     }
@@ -205,13 +211,12 @@ public class GamePanel extends AnchorPane {
 
 
 }
+class addother<K extends FloatingItems> implements Runnable{
 
-class additem implements Runnable{
+    K item;
+    Vector<K> v;
 
-    Node item;
-    ObservableList<Node> v;
-
-    additem(Node item, ObservableList<Node> v){
+    addother(K item, Vector<K> v){
         this.item = item;
         this.v = v;
     }
