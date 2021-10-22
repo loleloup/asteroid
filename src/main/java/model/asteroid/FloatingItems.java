@@ -4,8 +4,8 @@ import javafx.scene.shape.Polygon;
 
 public class FloatingItems {
 
-    static int wind_width;
-    static int wind_height;
+    static float wind_width;
+    static float wind_height;
 
 
     float x = 0;
@@ -46,7 +46,7 @@ public class FloatingItems {
         sprite.setRotate(angle);
     }
 
-    public static void set_wind_size(int width, int height){
+    public static void set_wind_size(float width, float height){
         wind_width = width;
         wind_height = height;
     }
@@ -56,7 +56,35 @@ public class FloatingItems {
         return sprite.intersects(sprite.sceneToLocal(other.sprite.localToScene(other.sprite.getBoundsInLocal())));
     }
 
+    public void set_position(float x, float y){
+        this.x = x;
+        this.y = y;
+    }
+    public void set_speed(float x_speed, float y_speed){
+        this.x_speed = x_speed;
+        this.y_speed = y_speed;
+    }
+
     public Polygon get_sprite(){
         return sprite;
     }
+
+    public static float getWind_width(){
+        return wind_width;
+    }
+
+    public static float getWind_height(){
+        return wind_height;
+    }
+
+    public void scale_all(float Hrat, float Vrat){
+        x *= Hrat;
+        y *= Vrat;
+        x_speed *= Hrat;
+        y_speed *= Vrat;
+        sprite.setScaleX(Hrat);
+        sprite.setScaleY(Vrat);
+    }
+
+
 }

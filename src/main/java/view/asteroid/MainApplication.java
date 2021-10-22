@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 import model.asteroid.Meteor;
@@ -25,8 +26,10 @@ public class MainApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        GamePanel pane = new GamePanel(1080, 720);
+        VBox box = new VBox();
+        GamePanel pane = new GamePanel(stage, 1080, 720);
         Scene scene = new Scene(pane, 1080, 720);
+
         pane.add_handlers();
         this.stage = stage;
         this.stage.setTitle("Asteroid");
