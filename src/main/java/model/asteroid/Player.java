@@ -18,8 +18,10 @@ public class Player extends FloatingItems{
 
         sprite = new Polygon();
         sprite.getPoints().addAll(pointlist);
-        sprite.setTranslateX(x);
-        sprite.setTranslateY(y);
+        sprite.setTranslateX(x*Hrat);
+        sprite.setTranslateY(y*Vrat);
+        sprite.setScaleX(Hrat);
+        sprite.setScaleY(Vrat);
     }
 
     public void thrust(){
@@ -67,7 +69,7 @@ public class Player extends FloatingItems{
 
     public Projectile shoot(){
         fire_delay = fire_rate;
-        return new Projectile(x, y, (float) -Math.cos(Math.toRadians(angle)), -(float) Math.sin(Math.toRadians(angle)));
+        return new Projectile(x+6, y, (float) -Math.cos(Math.toRadians(angle)), -(float) Math.sin(Math.toRadians(angle)));
     }
 
     //TODO add hyperspace TP

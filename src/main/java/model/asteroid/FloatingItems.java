@@ -6,6 +6,8 @@ public class FloatingItems {
 
     static float wind_width;
     static float wind_height;
+    static float Hrat = 1;
+    static float Vrat = 1;
 
 
     float x = 0;
@@ -41,8 +43,8 @@ public class FloatingItems {
             y = y%wind_height;
         }
 
-        sprite.setTranslateX(x);
-        sprite.setTranslateY(y);
+        sprite.setTranslateX(x*Hrat);
+        sprite.setTranslateY(y*Vrat);
         sprite.setRotate(angle);
     }
 
@@ -78,13 +80,13 @@ public class FloatingItems {
     }
 
     public void scale_all(float Hrat, float Vrat){
-        x *= Hrat;
-        y *= Vrat;
-        x_speed *= Hrat;
-        y_speed *= Vrat;
         sprite.setScaleX(Hrat);
         sprite.setScaleY(Vrat);
     }
 
 
+    public static void new_rat(float Hrat, float Vrat){
+        FloatingItems.Hrat *= Hrat;
+        FloatingItems.Vrat *= Vrat;
+    }
 }

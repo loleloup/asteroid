@@ -12,10 +12,12 @@ public class Projectile extends FloatingItems{
         super(x, y, x_speed*vel, y_speed*vel, 0);
 
 
-        Double[] points = new Double[]{1.0, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0, -1.0};
+        Double[] points = new Double[]{1.5, 0.0, 0.0, 1.5, -1.5, 0.0, 0.0, -1.5};
 
         sprite = new Polygon();
         sprite.getPoints().addAll(points);
+        sprite.setScaleX(Hrat);
+        sprite.setScaleY(Vrat);
 
 
     }

@@ -41,6 +41,9 @@ public class GamePanel extends AnchorPane {
     ObservableList<Node> meteor_sprites;
     ObservableList<Node> projectile_sprites;
 
+    float old_width;
+    float old_height;
+
     Label score = new Label("0");
 
     Thread timerThread = new Thread(() -> {
@@ -56,6 +59,9 @@ public class GamePanel extends AnchorPane {
 
     public GamePanel(Stage primaryStage, float width, float height){
         super();
+        this.old_width = width;
+        this.old_height = height;
+
         FloatingItems.set_wind_size(width, height);
 
         Group meteor_group = new Group();
@@ -69,6 +75,7 @@ public class GamePanel extends AnchorPane {
         children.add(proj_group);
 
         children.add(score);
+
 
 // create a listener
         final ChangeListener<Number> listener = new ChangeListener<Number>()
@@ -90,17 +97,19 @@ public class GamePanel extends AnchorPane {
                     @Override
                     public void run()
                     {
-                        System.out.println("resize to " + primaryStage.getWidth() + " " + primaryStage.getHeight());
-                        // here you can place your resize code
-                        float old_width = FloatingItems.getWind_width();
-                        float old_height = FloatingItems.getWind_height();
+                        //System.out.println("resize to " + primaryStage.getWidth() + " " + primaryStage.getHeight());
+
                         float width = (float)primaryStage.getWidth();
                         float height = (float)primaryStage.getHeight();
 
                         float Hrat = width/old_width;
                         float Vrat = height/old_height;
 
-                        FloatingItems.set_wind_size(width, height);
+                        old_width = width;
+                        old_height = height;
+
+                        //FloatingItems.set_wind_size(width, height);
+                        FloatingItems.new_rat(Hrat, Vrat);
 
                         for (Projectile p : projectiles){
                             p.scale_all(Hrat, Vrat);
@@ -195,10 +204,6 @@ public class GamePanel extends AnchorPane {
         //children.add(m.get_sprite());
         meteor_sprites.add(m.get_sprite());
         children.add(player.get_sprite());
-        setTopAnchor(player.get_sprite(), 0.0);
-        setBottomAnchor(player.get_sprite(), 720.0);
-        setLeftAnchor(player.get_sprite(), 0.0);
-        setRightAnchor(player.get_sprite(), 1080.0);
         timerThread.start();
     }
 
