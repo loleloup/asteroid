@@ -35,21 +35,20 @@ public class paneltest extends AnchorPane {
 
     long last_time;
 
+    ObservableList<Node> children;
+
     AnimationTimer timer = new AnimationTimer() {
         @Override
         public void handle(long l) {
             //System.out.println(last_time + "    " + l + "   diff = " + (l-last_time)/1000000);
             last_time = l;
-            try {
-                update();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            update();
         }
     };
 
     public paneltest(int width, int height){
         FloatingItems.set_wind_size(width, height);
+        children = getChildren();
     }
 
     public void add_handlers(){     //need to add the events to the scene, otherwise doesn't receive them
@@ -123,18 +122,16 @@ public class paneltest extends AnchorPane {
 
         Meteor m = new Meteor(20, 20, 1, 1, 3);
         enemy.add(m);
-        getChildren().add(m.get_sprite());
-        getChildren().add(player.get_sprite());
+        children.add(m.get_sprite());
+        children.add(player.get_sprite());
         timer.start();
     }
 
-    void update() throws InterruptedException {
+    void update() {
         player.handle_inputs(z_flag, d_flag, q_flag);
         player.update();
         if (player.can_shoot() & space_flag){
-            Projectile p = player.shoot();
-            Platform.runLater(new addother<>(p, projectiles));
-            Platform.runLater(new additem(p.get_sprite(), getChildren()));
+            Platform.runLater(this::player_shoot);
         }
         Iterator<Projectile> p_it = projectiles.iterator();
         Projectile p;
@@ -151,9 +148,10 @@ public class paneltest extends AnchorPane {
                 while (m_it.hasNext()){
                     meteor = m_it.next();
                     if (p.is_collision(meteor)){
-                        remove_meteor(m_it, meteor);
-                        removeSprite(p.get_sprite());
                         p_it.remove();
+                        Platform.runLater(new removemeteor(meteor));
+                        m_it.remove();
+                        removeSprite(p.get_sprite());
                     }
                 }
             }
@@ -171,23 +169,23 @@ public class paneltest extends AnchorPane {
                 else{
 
                 }
-
-                //for collision with bullet only
-
-
-
             }
         }
     }
 
+    private void player_shoot(){
+        Projectile p = player.shoot();
+        projectiles.add(p);
+        children.add(p.get_sprite());
+    }
 
     private void removeSprite(Polygon sprite){
-        Iterator<Node> children = getChildren().iterator();
+        Iterator<Node> child_it = children.iterator();
         Node next;
-        while (children.hasNext()){     //finds and safely deletes the node
-            next = children.next();
+        while (child_it.hasNext()){     //finds and safely deletes the node
+            next = child_it.next();
             if (next == sprite){
-                children.remove();
+                child_it.remove();
             }
         }
     }
@@ -207,6 +205,29 @@ public class paneltest extends AnchorPane {
         }
     }
 
+    class removemeteor implements Runnable{
+
+        Meteor meteor;
+
+        removemeteor(Meteor meteor){
+            this.meteor = meteor;
+        }
+
+        @Override
+        public void run() {
+            children.remove(meteor.get_sprite());
+            int new_size = meteor.get_size()-1;
+            if (new_size > 0){
+                Meteor baby = meteor.break_it();
+                enemy.add(baby);
+                children.add(baby.get_sprite());
+                baby = meteor.break_it();
+                enemy.add(baby);
+                children.add(baby.get_sprite());
+            }
+        }
+    }
+
 
 
 
@@ -217,6 +238,23 @@ class addother<K extends FloatingItems> implements Runnable{
     Vector<K> v;
 
     addother(K item, Vector<K> v){
+        this.item = item;
+        this.v = v;
+    }
+
+
+    @Override
+    public void run() {
+        v.add(item);
+    }
+}
+
+class additem implements Runnable{
+
+    Node item;
+    ObservableList<Node> v;
+
+    additem(Node item, ObservableList<Node> v){
         this.item = item;
         this.v = v;
     }

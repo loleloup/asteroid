@@ -12,10 +12,9 @@ import model.asteroid.Meteor;
 import model.asteroid.Player;
 import model.asteroid.Projectile;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.concurrent.Semaphore;
+
 
 import static java.lang.Thread.sleep;
 
@@ -30,6 +29,8 @@ public class GamePanel extends AnchorPane {
     boolean d_flag = false;
     boolean space_flag = false;
 
+    ObservableList<Node> children;
+
     Thread timerThread = new Thread(() -> {
         while (true) {
             try {
@@ -43,6 +44,7 @@ public class GamePanel extends AnchorPane {
 
     public GamePanel(int width, int height){
         FloatingItems.set_wind_size(width, height);
+        children = getChildren();
     }
 
     public void add_handlers(){     //need to add the events to the scene, otherwise doesn't receive them
@@ -113,22 +115,18 @@ public class GamePanel extends AnchorPane {
 
 
     public void start(){
-
         Meteor m = new Meteor(20, 20, 1, 1, 3);
         enemy.add(m);
-        getChildren().add(m.get_sprite());
-        getChildren().add(player.get_sprite());
+        children.add(m.get_sprite());
+        children.add(player.get_sprite());
         timerThread.start();
     }
 
-    void update(){
-
+    void update() {
         player.handle_inputs(z_flag, d_flag, q_flag);
         player.update();
         if (player.can_shoot() & space_flag){
-            Projectile p = player.shoot();
-            projectiles.add(p);
-            Platform.runLater(new additem(p.get_sprite(), getChildren()));
+            Platform.runLater(this::player_shoot);
         }
         Iterator<Projectile> p_it = projectiles.iterator();
         Projectile p;
@@ -145,9 +143,10 @@ public class GamePanel extends AnchorPane {
                 while (m_it.hasNext()){
                     meteor = m_it.next();
                     if (p.is_collision(meteor)){
-                        remove_meteor(m_it, meteor);
-                        removeSprite(p.get_sprite());
                         p_it.remove();
+                        Platform.runLater(new removemeteor(meteor));
+                        m_it.remove();
+                        removeSprite(p.get_sprite());
                     }
                 }
             }
@@ -165,62 +164,50 @@ public class GamePanel extends AnchorPane {
                 else{
 
                 }
-
-                //for collision with bullet only
-
-
-
             }
         }
-        }
+    }
+
+
+    private void player_shoot(){
+        Projectile p = player.shoot();
+        projectiles.add(p);
+        children.add(p.get_sprite());
+    }
 
 
     private void removeSprite(Polygon sprite){
-        Iterator<Node> children = getChildren().iterator();
+        Iterator<Node> child_it = children.iterator();
         Node next;
-        while (children.hasNext()){     //finds and safely deletes the node
-            next = children.next();
+        while (child_it.hasNext()){     //finds and safely deletes the node
+            next = child_it.next();
             if (next == sprite){
-                children.remove();
+                child_it.remove();
             }
         }
     }
 
 
-    private void remove_meteor(Iterator<Meteor> m_it, Meteor meteor){
-        removeSprite(meteor.get_sprite());
-        m_it.remove();
-        int new_size = meteor.get_size()-1;
-        if (new_size > 0){
-            Meteor baby = meteor.break_it();
-            enemy.add(baby);
-            Platform.runLater(new additem(baby.get_sprite(), getChildren()));
-            baby = meteor.break_it();
-            enemy.add(baby);
-            Platform.runLater(new additem(baby.get_sprite(), getChildren()));
+    class removemeteor implements Runnable{
+
+        Meteor meteor;
+
+        removemeteor(Meteor meteor){
+            this.meteor = meteor;
+        }
+
+        @Override
+        public void run() {
+            children.remove(meteor.get_sprite());
+            int new_size = meteor.get_size()-1;
+            if (new_size > 0){
+                Meteor baby = meteor.break_it();
+                enemy.add(baby);
+                children.add(baby.get_sprite());
+                baby = meteor.break_it();
+                enemy.add(baby);
+                children.add(baby.get_sprite());
+            }
         }
     }
-
-
-
-
 }
-
-class additem implements Runnable{
-
-    Node item;
-    ObservableList<Node> v;
-
-    additem(Node item, ObservableList<Node> v){
-        this.item = item;
-        this.v = v;
-    }
-
-
-    @Override
-    public void run() {
-        v.add(item);
-    }
-}
-
-//TODO add better runlater wrapping : pack multiple runlater in single runnable
