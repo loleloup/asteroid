@@ -10,7 +10,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Region;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 import model.asteroid.FloatingItems;
@@ -18,19 +17,19 @@ import model.asteroid.Meteor;
 import model.asteroid.Player;
 import model.asteroid.Projectile;
 
-import java.util.Iterator;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.Vector;
+import java.util.*;
 
 import static java.lang.Thread.sleep;
 
+
+//TODO spread responsibilities with other classes?
 public class GamePanel extends AnchorPane {
 
     Vector<Meteor> enemy = new Vector<>();
     Vector<Projectile> projectiles = new Vector<>();
-    Player player = new Player(500, 500, 0, 0, 0);
+    Player player = new Player(500, 500, 0, 0);
 
+    //for responsive player inputs
     boolean z_flag = false;
     boolean q_flag = false;
     boolean d_flag = false;
@@ -44,8 +43,15 @@ public class GamePanel extends AnchorPane {
     float old_width;
     float old_height;
 
-    Label score = new Label("0");
+    //score handling
+    int score = 0;
+    Label score_label = new Label("0");
 
+    //new wave signal
+    boolean new_wave = true;
+    int wave_nb = 0;
+
+    //game refresh timer 60Hz
     Thread timerThread = new Thread(() -> {
         while (true) {
             try {
@@ -74,10 +80,17 @@ public class GamePanel extends AnchorPane {
         children.add(meteor_group);
         children.add(proj_group);
 
-        children.add(score);
+        children.add(score_label);
 
 
-// create a listener
+        final ChangeListener<Number> listener = getChangeListener(primaryStage);
+
+// finally we have to register the listener
+        primaryStage.widthProperty().addListener(listener);
+        primaryStage.heightProperty().addListener(listener);
+    }
+
+    private ChangeListener<Number> getChangeListener(Stage primaryStage) {
         final ChangeListener<Number> listener = new ChangeListener<Number>()
         {
             final Timer timer = new Timer(); // uses a timer to call your resize method
@@ -99,8 +112,8 @@ public class GamePanel extends AnchorPane {
                     {
                         //System.out.println("resize to " + primaryStage.getWidth() + " " + primaryStage.getHeight());
 
-                        float width = (float)primaryStage.getWidth();
-                        float height = (float)primaryStage.getHeight();
+                        float width = (float) primaryStage.getWidth();
+                        float height = (float) primaryStage.getHeight();
 
                         float Hrat = width/old_width;
                         float Vrat = height/old_height;
@@ -125,10 +138,7 @@ public class GamePanel extends AnchorPane {
                 timer.schedule(task, delayTime);
             }
         };
-
-// finally we have to register the listener
-        primaryStage.widthProperty().addListener(listener);
-        primaryStage.heightProperty().addListener(listener);
+        return listener;
     }
 
     public void add_handlers(){     //need to add the events to the scene, otherwise doesn't receive them
@@ -199,10 +209,7 @@ public class GamePanel extends AnchorPane {
 
 
     public void start(){
-        Meteor m = new Meteor(20, 20, 1, 1, 3);
-        enemy.add(m);
-        //children.add(m.get_sprite());
-        meteor_sprites.add(m.get_sprite());
+
         children.add(player.get_sprite());
         timerThread.start();
     }
@@ -218,20 +225,23 @@ public class GamePanel extends AnchorPane {
         while (p_it.hasNext()){
             p = p_it.next();
             p.update();
-            if (p.is_dead()){
+            if (p.is_dead()){   //projectile's lifetime ended
                 removeSprite(p.get_sprite(), projectile_sprites);
                 p_it.remove();
             }
-            else{
+            else{   //check for collision with meteors
                 Iterator<Meteor> m_it = enemy.iterator();
                 Meteor meteor;
                 while (m_it.hasNext()){
                     meteor = m_it.next();
-                    if (p.is_collision(meteor)){
+                    if (p.is_collision(meteor)){    //remove projectile and meteor (+breaks the meteor)
                         p_it.remove();
                         Platform.runLater(new removemeteor(meteor));
                         m_it.remove();
                         removeSprite(p.get_sprite(), projectile_sprites);
+                        if (enemy.isEmpty()){   //destroyed last meteor
+                            new_wave = true;
+                        }
                     }
                 }
             }
@@ -239,10 +249,10 @@ public class GamePanel extends AnchorPane {
         }
         Iterator<Meteor> m_it = enemy.iterator();
         Meteor meteor;
-        while (m_it.hasNext()){
+        while (m_it.hasNext()){     //updates meteors
             meteor = m_it.next();
             meteor.update();
-            if (player.is_alive() & meteor.is_collision(player)){
+            if (player.is_alive() & meteor.is_collision(player)){   //check collision with player
                 if (!player.lose_life()){
                     //gameover
                 }
@@ -251,6 +261,33 @@ public class GamePanel extends AnchorPane {
                 }
             }
         }
+
+        if (new_wave){
+            wave_nb++;
+            new_wave = false;
+            create_wave();
+        }
+    }
+
+    private void create_wave() {
+        Random rand = new Random();
+        int meteor_nb = wave_nb * 2;
+        Meteor new_m;
+        for (int i = 0; i < meteor_nb/2; i++){
+            new_m = new Meteor(rand.nextInt((int) FloatingItems.getWind_width()), 0, (rand.nextFloat()-0.5)*2, (rand.nextFloat()-0.5)*2, 3);
+            enemy.add(new_m);
+            meteor_sprites.add(new_m.get_sprite());
+            new_m = new Meteor(0, rand.nextInt( (int) FloatingItems.getWind_height()), (rand.nextFloat()-0.5)*2, (rand.nextFloat()-0.5)*2, 3);
+            enemy.add(new_m);
+            meteor_sprites.add(new_m.get_sprite());
+        }
+
+        projectiles.clear();
+        projectile_sprites.clear();
+
+        player.reset_pos();
+
+
     }
 
 
@@ -285,6 +322,8 @@ public class GamePanel extends AnchorPane {
         public void run() {
             meteor_sprites.remove(meteor.get_sprite());
             int new_size = meteor.get_size()-1;
+            score += (new_size+1) * 10;
+            score_label.setText(String.valueOf(score));
             if (new_size > 0){
                 Meteor baby = meteor.break_it();
                 enemy.add(baby);

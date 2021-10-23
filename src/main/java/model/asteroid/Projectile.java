@@ -5,7 +5,7 @@ import javafx.scene.shape.Polygon;
 public class Projectile extends FloatingItems{
 
     static float vel = 5;
-    int lifetime = 120;
+    int lifetime = 90;
 
     public Projectile(float x, float y, float x_speed, float y_speed){
 

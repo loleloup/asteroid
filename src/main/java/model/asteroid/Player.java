@@ -11,7 +11,7 @@ public class Player extends FloatingItems{
     int fire_rate = 15;
     int fire_delay = 0;
 
-    public Player(float x, float y, float x_speed, float y_speed, int angle_deg) {
+    public Player(float x, float y, float x_speed, float y_speed) {
         super(x, y, x_speed, y_speed, 0);
 
         Double[] pointlist = new Double[]{0.0, 0.0, 15.0, -7.0, 10.0, 0.0, 15.0, 7.0};
@@ -70,6 +70,12 @@ public class Player extends FloatingItems{
     public Projectile shoot(){
         fire_delay = fire_rate;
         return new Projectile(x+6, y, (float) -Math.cos(Math.toRadians(angle)), -(float) Math.sin(Math.toRadians(angle)));
+    }
+
+
+    public void reset_pos(){
+        x = wind_width/2;
+        y = wind_height/2;
     }
 
     //TODO add hyperspace TP

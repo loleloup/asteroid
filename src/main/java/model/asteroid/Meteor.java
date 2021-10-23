@@ -1,6 +1,5 @@
 package model.asteroid;
 
-import javafx.scene.Node;
 import javafx.scene.shape.Polygon;
 
 import java.util.Random;
@@ -10,8 +9,8 @@ public class Meteor extends FloatingItems{
     float rot_speed = 0;
     int size = 3;
 
-    public Meteor(float x, float y, float x_speed, float y_speed, int size){
-        super(x, y, x_speed, y_speed, 0);
+    public Meteor(float x, float y, double x_speed, double y_speed, int size){
+        super(x, y, (float) x_speed, (float) y_speed, 0);
         this.size = size;
         Random rand = new Random();
         int edges = rand.nextInt(5) + 7;    //minimum a pentagon, maximum a decagon

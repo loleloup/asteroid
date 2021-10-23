@@ -26,7 +26,7 @@ public class paneltest extends AnchorPane {
 
     Vector<Meteor> enemy = new Vector<>();
     Vector<Projectile> projectiles = new Vector<>();
-    Player player = new Player(500, 500, 0, 0, 0);
+    Player player = new Player(500, 500, 0, 0);
 
     boolean z_flag = false;
     boolean q_flag = false;
