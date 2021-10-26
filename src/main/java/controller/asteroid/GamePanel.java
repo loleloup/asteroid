@@ -98,6 +98,12 @@ public class GamePanel extends AnchorPane {
         primaryStage.heightProperty().addListener(listener);
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        timerThread.interrupt();
+        super.finalize();
+    }
+
     private ChangeListener<Number> getChangeListener(Stage primaryStage) {
         final ChangeListener<Number> listener = new ChangeListener<Number>()
         {
@@ -214,7 +220,6 @@ public class GamePanel extends AnchorPane {
         getScene().addEventHandler(KeyEvent.KEY_PRESSED, keyPressedHandler);
         getScene().addEventHandler(KeyEvent.KEY_RELEASED, keyReleasedHandler);
     }
-
 
     public void start(){
 
