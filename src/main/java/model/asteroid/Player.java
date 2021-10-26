@@ -1,27 +1,31 @@
 package model.asteroid;
 
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.shape.Polygon;
 
 public class Player extends FloatingItems{
 
-    double THRUSTER_POWER = 0.3;
-    float angle_speed = 5;
-    int lives = 0;
+    double THRUSTER_POWER = 0.2;
+    float angle_speed = 6;
     int alive = 0;
     int fire_rate = 15;
     int fire_delay = 0;
+    Health health;
 
-    public Player(float x, float y, float x_speed, float y_speed) {
-        super(x, y, x_speed, y_speed, 0);
+    public Player(float x, float y, ObservableList<Node> display) {
+        super(x, y, 0, 0, 0);
 
         Double[] pointlist = new Double[]{0.0, 0.0, 15.0, -7.0, 10.0, 0.0, 15.0, 7.0};
-
 
         sprite.getPoints().addAll(pointlist);
         sprite.setTranslateX(x*Hrat);
         sprite.setTranslateY(y*Vrat);
         sprite.setScaleX(Hrat);
         sprite.setScaleY(Vrat);
+
+        health = new Health(sprite, 3, display);
+
     }
 
     public void thrust(){
@@ -44,9 +48,8 @@ public class Player extends FloatingItems{
     }
 
     public boolean lose_life(){
-        lives--;
         alive = 180;    //3 sec invincibility
-        return lives > 0;
+        return health.lose_health();
     }
 
     public void update(){

@@ -14,8 +14,7 @@ public class MainApplication extends Application {
     Stage stage;
 
     @Override
-    public void start(Stage stage) throws IOException {
-        VBox box = new VBox();
+    public void start(Stage stage){
         GamePanel pane = new GamePanel(stage, 1080, 720);
         Scene scene = new Scene(pane, 1080, 720);
 

@@ -30,7 +30,7 @@ public class GamePanel extends AnchorPane {
 
     Vector<Meteor> enemy = new Vector<>();
     Vector<Projectile> projectiles = new Vector<>();
-    Player player = new Player(500, 500, 0, 0);
+    Player player;
 
     //for responsive player inputs
     boolean z_flag = false;
@@ -93,7 +93,6 @@ public class GamePanel extends AnchorPane {
 
         final ChangeListener<Number> listener = getChangeListener(primaryStage);
 
-// finally we have to register the listener
         primaryStage.widthProperty().addListener(listener);
         primaryStage.heightProperty().addListener(listener);
     }
@@ -222,7 +221,7 @@ public class GamePanel extends AnchorPane {
     }
 
     public void start(){
-
+        player = new Player(500, 500, children);
         children.add(player.get_sprite());
         timerThread.start();
     }
@@ -268,9 +267,6 @@ public class GamePanel extends AnchorPane {
             if (player.is_alive() & meteor.is_collision(player)){   //check collision with player
                 if (!player.lose_life()){
                     //gameover
-                }
-                else{
-
                 }
             }
         }
