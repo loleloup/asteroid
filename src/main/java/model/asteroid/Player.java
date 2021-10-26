@@ -16,7 +16,7 @@ public class Player extends FloatingItems{
 
         Double[] pointlist = new Double[]{0.0, 0.0, 15.0, -7.0, 10.0, 0.0, 15.0, 7.0};
 
-        sprite = new Polygon();
+
         sprite.getPoints().addAll(pointlist);
         sprite.setTranslateX(x*Hrat);
         sprite.setTranslateY(y*Vrat);

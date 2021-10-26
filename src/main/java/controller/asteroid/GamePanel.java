@@ -10,6 +10,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 import model.asteroid.FloatingItems;
@@ -67,6 +70,11 @@ public class GamePanel extends AnchorPane {
         super();
         this.old_width = width;
         this.old_height = height;
+
+        setBackground(new Background(new BackgroundFill(Paint.valueOf("black"), null, null)));
+        score_label.setTextFill(Paint.valueOf("white"));
+        score_label.setLayoutX(5);
+        score_label.setLayoutY(5);
 
         FloatingItems.set_wind_size(width, height);
 

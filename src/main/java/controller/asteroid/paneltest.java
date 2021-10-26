@@ -13,12 +13,8 @@ import model.asteroid.Meteor;
 import model.asteroid.Player;
 import model.asteroid.Projectile;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.concurrent.Semaphore;
-
-import static java.lang.Thread.sleep;
 
 
 

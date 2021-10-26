@@ -1,24 +1,13 @@
 package view.asteroid;
 
 import controller.asteroid.GamePanel;
-import controller.asteroid.paneltest;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
-import model.asteroid.Meteor;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
 
-import static java.lang.Thread.sleep;
 
 public class MainApplication extends Application {
 

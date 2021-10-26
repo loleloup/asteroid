@@ -1,5 +1,6 @@
 package model.asteroid;
 
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 
 public class FloatingItems {
@@ -25,6 +26,9 @@ public class FloatingItems {
         this.x_speed = x_speed;
         this.y_speed = y_speed;
         this.angle = angle;
+        sprite = new Polygon();
+        sprite.setFill(Paint.valueOf("transparent"));
+        sprite.setStroke(Paint.valueOf("white"));
     }
 
     public void update(){

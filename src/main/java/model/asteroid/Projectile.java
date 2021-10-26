@@ -14,7 +14,7 @@ public class Projectile extends FloatingItems{
 
         Double[] points = new Double[]{1.5, 0.0, 0.0, 1.5, -1.5, 0.0, 0.0, -1.5};
 
-        sprite = new Polygon();
+
         sprite.getPoints().addAll(points);
         sprite.setScaleX(Hrat);
         sprite.setScaleY(Vrat);

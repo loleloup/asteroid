@@ -22,7 +22,7 @@ public class Meteor extends FloatingItems{
             pointlist[i*2] = ((Math.cos(Math.toRadians(360.0/edges*i))*semi_diag)+uncertainty_x)*((0.1+0.4*size));
             pointlist[i*2+1] = ((Math.sin(Math.toRadians(360.0/edges*i))*semi_diag)+uncertainty_y)*((0.1+0.4*size));
         }
-        sprite = new Polygon();
+
         sprite.getPoints().addAll(pointlist);
         sprite.setScaleX(Hrat);
         sprite.setScaleY(Vrat);
