@@ -12,6 +12,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
@@ -266,7 +267,7 @@ public class GamePanel extends AnchorPane {
             meteor.update();
             if (player.is_alive() & meteor.is_collision(player)){   //check collision with player
                 if (!player.lose_life()){
-                    //gameover
+                    end_game();
                 }
             }
         }
@@ -276,6 +277,18 @@ public class GamePanel extends AnchorPane {
             new_wave = false;
             create_wave();
         }
+    }
+
+    private void end_game() {
+        timerThread.interrupt();
+        meteor_sprites.clear();
+        projectile_sprites.clear();
+        enemy.clear();
+        projectiles.clear();
+        Region reg = new Region();
+        reg.setBackground(new Background(new BackgroundFill(Paint.valueOf("black"), null, null)));
+        children.add(reg);
+
     }
 
     private void create_wave() {
@@ -294,9 +307,7 @@ public class GamePanel extends AnchorPane {
         projectiles.clear();
         projectile_sprites.clear();
 
-        player.reset_pos();
-
-
+        player.reset();
     }
 
 

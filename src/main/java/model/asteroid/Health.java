@@ -31,8 +31,10 @@ public class Health {
     }
 
     public boolean lose_health(){
-        act_health--;
-        sprites[act_health].setVisible(false);
+        if (act_health > 0){
+            act_health--;
+            sprites[act_health].setVisible(false);
+        }
         return act_health > 0;
     }
 
